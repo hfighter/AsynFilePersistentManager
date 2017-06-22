@@ -1,0 +1,2 @@
+# AsynFilePersistentManager
+支持多线程访问的文件读写工具
