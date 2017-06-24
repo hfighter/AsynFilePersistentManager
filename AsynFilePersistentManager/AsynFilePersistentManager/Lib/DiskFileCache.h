@@ -1,5 +1,5 @@
 //
-//  YKDiskCache.h
+//  DiskFileCache.h
 //  AsynFilePersistentManager
 //
 //  Created by hui hong on 2017/6/22.
@@ -14,19 +14,24 @@ typedef NS_ENUM(NSInteger, YKDiskCacheWriteType)
     YKDiskCacheWriteTypeAppend  // 追加写
 };
 
+// 考虑iCloud同步问题
+
+/**
+ 写文件结束时回调
+ */
 typedef void(^WriteFinished)(BOOL success);
 typedef void(^ReadAllFinished) (NSData *data, BOOL success);
 typedef void(^ReadBlockFinished) (NSData *data, NSUInteger index, BOOL success);
 typedef void(^ReadFileOver)();
 
-@interface YKDiskCache : NSObject
+@interface DiskFileCache : NSObject
 
 // 覆盖写文件
-+ (void)synCoverWrite:(NSData *)data toPath:(NSString *)filePath;
++ (BOOL)synCoverWrite:(NSData *)data toPath:(NSString *)filePath;
 + (void)asynCoverWrite:(NSData *)data toPath:(NSString *)filePath finished:(WriteFinished)finished;
 
 // 追加写文件
-+ (void)synAppendWrite:(NSData *)data toPath:(NSString *)filePath;
++ (BOOL)synAppendWrite:(NSData *)data toPath:(NSString *)filePath;
 + (void)asynAppendWrite:(NSData *)data toPath:(NSString *)filePath finished:(WriteFinished)finished;
 
 // 可自定义文件类型写文件
@@ -37,7 +42,7 @@ typedef void(^ReadFileOver)();
 + (NSData *)synRead:(NSString *)filePath;
 + (void)asynRead:(NSString *)filePath finished:(ReadAllFinished)finished;
 
-// 每次读取size大小数据，直到文件读取完成
+// 每次读取size大小数据，直到文件读取完成（上传数据时）
 + (void)synReadWithSize:(NSUInteger)size progress:(ReadBlockFinished)progress over:(ReadFileOver)over;
 + (void)asynReadWithSize:(NSUInteger)size progress:(ReadBlockFinished)progress over:(ReadFileOver)over;
 

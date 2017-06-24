@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D359EFB1EFD262100C1B536 /* FileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D359EFA1EFD262100C1B536 /* FileManager.m */; };
 		5DA2B6901EFC099500184B6D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA2B68F1EFC099500184B6D /* main.m */; };
 		5DA2B6931EFC099500184B6D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA2B6921EFC099500184B6D /* AppDelegate.m */; };
 		5DA2B6961EFC099500184B6D /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA2B6951EFC099500184B6D /* ViewController.m */; };
@@ -15,7 +16,7 @@
 		5DA2B69E1EFC099500184B6D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DA2B69C1EFC099500184B6D /* LaunchScreen.storyboard */; };
 		5DA2B6A91EFC099500184B6D /* AsynFilePersistentManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA2B6A81EFC099500184B6D /* AsynFilePersistentManagerTests.m */; };
 		5DA2B6B41EFC099500184B6D /* AsynFilePersistentManagerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA2B6B31EFC099500184B6D /* AsynFilePersistentManagerUITests.m */; };
-		5DA2B6C71EFC154B00184B6D /* YKDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA2B6C61EFC154B00184B6D /* YKDiskCache.m */; };
+		5DA2B6C71EFC154B00184B6D /* DiskFileCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA2B6C61EFC154B00184B6D /* DiskFileCache.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5D359EF81EFD262100C1B536 /* MacroForCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroForCache.h; sourceTree = "<group>"; };
+		5D359EF91EFD262100C1B536 /* FileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileManager.h; sourceTree = "<group>"; };
+		5D359EFA1EFD262100C1B536 /* FileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileManager.m; sourceTree = "<group>"; };
 		5DA2B68B1EFC099500184B6D /* AsynFilePersistentManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AsynFilePersistentManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DA2B68F1EFC099500184B6D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5DA2B6911EFC099500184B6D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -52,8 +56,8 @@
 		5DA2B6AF1EFC099500184B6D /* AsynFilePersistentManagerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AsynFilePersistentManagerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DA2B6B31EFC099500184B6D /* AsynFilePersistentManagerUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AsynFilePersistentManagerUITests.m; sourceTree = "<group>"; };
 		5DA2B6B51EFC099500184B6D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5DA2B6C51EFC154B00184B6D /* YKDiskCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YKDiskCache.h; path = Lib/YKDiskCache.h; sourceTree = "<group>"; };
-		5DA2B6C61EFC154B00184B6D /* YKDiskCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YKDiskCache.m; path = Lib/YKDiskCache.m; sourceTree = "<group>"; };
+		5DA2B6C51EFC154B00184B6D /* DiskFileCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiskFileCache.h; path = Lib/DiskFileCache.h; sourceTree = "<group>"; };
+		5DA2B6C61EFC154B00184B6D /* DiskFileCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiskFileCache.m; path = Lib/DiskFileCache.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,8 +151,11 @@
 		5DA2B6C11EFC09A500184B6D /* Lib */ = {
 			isa = PBXGroup;
 			children = (
-				5DA2B6C51EFC154B00184B6D /* YKDiskCache.h */,
-				5DA2B6C61EFC154B00184B6D /* YKDiskCache.m */,
+				5DA2B6C51EFC154B00184B6D /* DiskFileCache.h */,
+				5DA2B6C61EFC154B00184B6D /* DiskFileCache.m */,
+				5D359EF81EFD262100C1B536 /* MacroForCache.h */,
+				5D359EF91EFD262100C1B536 /* FileManager.h */,
+				5D359EFA1EFD262100C1B536 /* FileManager.m */,
 			);
 			name = Lib;
 			sourceTree = "<group>";
@@ -286,10 +293,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D359EFB1EFD262100C1B536 /* FileManager.m in Sources */,
 				5DA2B6961EFC099500184B6D /* ViewController.m in Sources */,
 				5DA2B6931EFC099500184B6D /* AppDelegate.m in Sources */,
 				5DA2B6901EFC099500184B6D /* main.m in Sources */,
-				5DA2B6C71EFC154B00184B6D /* YKDiskCache.m in Sources */,
+				5DA2B6C71EFC154B00184B6D /* DiskFileCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -523,6 +531,7 @@
 				5DA2B6BA1EFC099500184B6D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5DA2B6BB1EFC099500184B6D /* Build configuration list for PBXNativeTarget "AsynFilePersistentManagerTests" */ = {
 			isa = XCConfigurationList;
@@ -531,6 +540,7 @@
 				5DA2B6BD1EFC099500184B6D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5DA2B6BE1EFC099500184B6D /* Build configuration list for PBXNativeTarget "AsynFilePersistentManagerUITests" */ = {
 			isa = XCConfigurationList;
@@ -539,6 +549,7 @@
 				5DA2B6C01EFC099500184B6D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
