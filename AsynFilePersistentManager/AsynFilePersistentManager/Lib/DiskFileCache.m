@@ -40,7 +40,7 @@
     }
     dispatch_semaphore_t lock = [[DiskFileCache sharedInstance] getLockByFilePath:filePath];
     Lock(lock);
-    BOOL success = WriteFile(data, filePath);
+    BOOL success = [data writeToFile:filePath atomically:YES];
     UnLock(lock);
     return success;
 }
@@ -204,13 +204,17 @@
     unsigned long long nextSizeToRead = fileSize > size ? size : fileSize; // 下一次要读的大小
     NSData *data;
     while (readSize <= fileSize) {
-        [fileHandle seekToFileOffset:readSize+nextSizeToRead];
+        if (nextSizeToRead <= 0) {
+            break;
+        }
+        [fileHandle seekToFileOffset:readSize];
          data = [fileHandle readDataOfLength:nextSizeToRead];
         if (progress) {
             progress(data, index, YES);
         }
         index ++;
         readSize += nextSizeToRead;
+        
         if (fileSize >= (readSize + size)) {
             nextSizeToRead = size;
         } else {
