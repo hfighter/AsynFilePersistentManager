@@ -48,7 +48,9 @@
 + (void)asynCoverWrite:(NSData *)data toPath:(NSString *)filePath finished:(WriteFinished)finished {
     dispatch_async(GlobalQueue(), ^{
         BOOL success = [DiskFileCache synCoverWrite:data toPath:filePath];
-        finished(success);
+        if (finished) {
+            finished(success);
+        }
     });
 }
 
@@ -65,7 +67,9 @@
 + (void)asynAppendWrite:(NSData *)data toPath:(NSString *)filePath finished:(WriteFinished)finished {
     dispatch_async(GlobalQueue(), ^{
         BOOL success = [DiskFileCache synAppendWrite:data toPath:filePath];
-        finished(success);
+        if (finished) {
+            finished(success);
+        }
     });
 }
 
@@ -86,19 +90,42 @@
 }
 
 + (NSData *)synRead:(NSString *)filePath {
-    return nil;
+    if (!filePath || ![FileManager fileExistAtPath:filePath]) {
+        return nil;
+    }
+    NSInteger size = [FileManager fileSize:filePath];
+    NSDataReadingOptions option;
+    if (size > Big_File_Size) {
+        option = NSDataReadingMappedIfSafe;
+    } else {
+        option = NSDataReadingMappedAlways;
+    }
+    NSError *error;
+    dispatch_semaphore_t lock = [[DiskFileCache sharedInstance] getLockByFilePath:filePath];
+    Lock(lock);
+    NSData *data = [NSData dataWithContentsOfFile:filePath options:option error:&error];
+    UnLock(lock);
+    NSLog(@"error is %@", error);
+    return data;
 }
 
 + (void)asynRead:(NSString *)filePath finished:(ReadAllFinished)finished {
-    
+    dispatch_async(GlobalQueue(), ^{
+        NSData *data = [DiskFileCache synRead:filePath];
+        if (finished) {
+            finished(data, YES);
+        }
+    });
 }
 
-+ (void)synReadWithSize:(NSUInteger)size progress:(ReadBlockFinished)progress over:(ReadFileOver)over {
-    
++ (void)synRead:(NSString *)filePath withSize:(NSUInteger)size progress:(ReadBlockFinished)progress over:(ReadFileOver)over {
+    [DiskFileCache read:filePath bySize:size progress:progress over:over];
 }
 
-+ (void)asynReadWithSize:(NSUInteger)size progress:(ReadBlockFinished)progress over:(ReadFileOver)over {
-    
++ (void)asynRead:(NSString *)filePath withSize:(NSUInteger)size progress:(ReadBlockFinished)progress over:(ReadFileOver)over {
+    dispatch_async(GlobalQueue(), ^{
+        [DiskFileCache read:filePath bySize:size progress:progress over:over];
+    });
 }
 
 #pragma mark - private methods
@@ -153,13 +180,48 @@
     dispatch_semaphore_t lock = [[DiskFileCache sharedInstance] getLockByFilePath:filePath];
     Lock(lock);
     NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filePath];
-    unsigned long long offset = [fileHandle seekToEndOfFile];
-    [fileHandle seekToFileOffset:offset];
+    [fileHandle seekToEndOfFile];
     [fileHandle writeData:data];
     [fileHandle synchronizeFile];
     [fileHandle closeFile];
     UnLock(lock);
     return YES;
+}
+
++ (void)read:(NSString *)filePath bySize:(NSUInteger)size progress:(ReadBlockFinished)progress over:(ReadFileOver)over {
+    if (!filePath || ![FileManager fileExistAtPath:filePath]) {
+        if (over) {
+            over();
+        }
+        return;
+    }
+    dispatch_semaphore_t lock = [[DiskFileCache sharedInstance] getLockByFilePath:filePath];
+    Lock(lock);
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingAtPath:filePath];
+    unsigned long long fileSize = [fileHandle seekToEndOfFile];
+    unsigned long long index = 0;
+    unsigned long long readSize = 0; // 已读大小
+    unsigned long long nextSizeToRead = fileSize > size ? size : fileSize; // 下一次要读的大小
+    NSData *data;
+    while (readSize <= fileSize) {
+        [fileHandle seekToFileOffset:readSize+nextSizeToRead];
+         data = [fileHandle readDataOfLength:nextSizeToRead];
+        if (progress) {
+            progress(data, index, YES);
+        }
+        index ++;
+        readSize += nextSizeToRead;
+        if (fileSize >= (readSize + size)) {
+            nextSizeToRead = size;
+        } else {
+            nextSizeToRead = fileSize - readSize;
+        }
+    }
+    if (over) {
+        over();
+    }
+    [fileHandle closeFile];
+    UnLock(lock);
 }
 
 #pragma mark - delegate

@@ -43,7 +43,7 @@ typedef void(^ReadFileOver)();
 + (void)asynRead:(NSString *)filePath finished:(ReadAllFinished)finished;
 
 // 每次读取size大小数据，直到文件读取完成（上传数据时）
-+ (void)synReadWithSize:(NSUInteger)size progress:(ReadBlockFinished)progress over:(ReadFileOver)over;
-+ (void)asynReadWithSize:(NSUInteger)size progress:(ReadBlockFinished)progress over:(ReadFileOver)over;
++ (void)synRead:(NSString *)filePath withSize:(NSUInteger)size progress:(ReadBlockFinished)progress over:(ReadFileOver)over;
++ (void)asynRead:(NSString *)filePath withSize:(NSUInteger)size progress:(ReadBlockFinished)progress over:(ReadFileOver)over;
 
 @end
