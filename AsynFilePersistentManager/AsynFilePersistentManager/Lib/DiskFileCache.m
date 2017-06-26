@@ -9,6 +9,7 @@
 #import "DiskFileCache.h"
 #import "FileManager.h"
 #import "MacroForCache.h"
+#import "ReadWriteLock.h"
 
 @interface DiskFileCache ()<NSCacheDelegate>
 
@@ -38,10 +39,10 @@
     if (![FileManager fileExistAtPath:filePath]) {
         [FileManager createFileAtPath:filePath];
     }
-    dispatch_semaphore_t lock = [[DiskFileCache sharedInstance] getLockByFilePath:filePath];
-    Lock(lock);
+    ReadWriteLock *lock = [[DiskFileCache sharedInstance] getLockByFilePath:filePath];
+    [lock wrLock];
     BOOL success = [data writeToFile:filePath atomically:YES];
-    UnLock(lock);
+    [lock unLock];
     return success;
 }
 
@@ -94,17 +95,16 @@
         return nil;
     }
     NSInteger size = [FileManager fileSize:filePath];
-    NSDataReadingOptions option;
-    if (size > Big_File_Size) {
-        option = NSDataReadingMappedIfSafe;
-    } else {
-        option = NSDataReadingMappedAlways;
-    }
     NSError *error;
-    dispatch_semaphore_t lock = [[DiskFileCache sharedInstance] getLockByFilePath:filePath];
-    Lock(lock);
-    NSData *data = [NSData dataWithContentsOfFile:filePath options:option error:&error];
-    UnLock(lock);
+    NSData *data;
+    ReadWriteLock *lock = [[DiskFileCache sharedInstance] getLockByFilePath:filePath];
+    [lock rdLock];
+    if (size > Big_File_Size) {
+        data = [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:&error];
+    } else {
+        data = [NSData dataWithContentsOfFile:filePath];
+    }
+    [lock unLock];
     NSLog(@"error is %@", error);
     return data;
 }
@@ -158,13 +158,25 @@
     }
 }
 
-- (dispatch_semaphore_t)getLockByFilePath:(NSString *)filePath {
+//- (dispatch_semaphore_t)getLockByFilePath:(NSString *)filePath {
+//    if (!filePath) {
+//        return nil;
+//    }
+//    dispatch_semaphore_t lock = [_lockCache objectForKey:filePath];
+//    if (!lock) {
+//        lock = GetLock();
+//        [_lockCache setObject:lock forKey:filePath];
+//    }
+//    return lock;
+//}
+
+- (ReadWriteLock *)getLockByFilePath:(NSString *)filePath {
     if (!filePath) {
         return nil;
     }
-    dispatch_semaphore_t lock = [_lockCache objectForKey:filePath];
+    ReadWriteLock *lock = [_lockCache objectForKey:filePath];
     if (!lock) {
-        lock = GetLock();
+        lock = [[ReadWriteLock alloc] init];
         [_lockCache setObject:lock forKey:filePath];
     }
     return lock;
@@ -177,14 +189,14 @@
     if (![FileManager fileExistAtPath:filePath]) {
         [FileManager createFileAtPath:filePath];
     }
-    dispatch_semaphore_t lock = [[DiskFileCache sharedInstance] getLockByFilePath:filePath];
-    Lock(lock);
+    ReadWriteLock *lock = [[DiskFileCache sharedInstance] getLockByFilePath:filePath];
+    [lock wrLock];
     NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filePath];
     [fileHandle seekToEndOfFile];
     [fileHandle writeData:data];
     [fileHandle synchronizeFile];
     [fileHandle closeFile];
-    UnLock(lock);
+    [lock unLock];
     return YES;
 }
 
@@ -195,8 +207,8 @@
         }
         return;
     }
-    dispatch_semaphore_t lock = [[DiskFileCache sharedInstance] getLockByFilePath:filePath];
-    Lock(lock);
+    ReadWriteLock *lock = [[DiskFileCache sharedInstance] getLockByFilePath:filePath];
+    [lock rdLock];
     NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingAtPath:filePath];
     unsigned long long fileSize = [fileHandle seekToEndOfFile];
     unsigned long long index = 0;
@@ -204,28 +216,30 @@
     unsigned long long nextSizeToRead = fileSize > size ? size : fileSize; // 下一次要读的大小
     NSData *data;
     while (readSize <= fileSize) {
-        if (nextSizeToRead <= 0) {
-            break;
-        }
-        [fileHandle seekToFileOffset:readSize];
-         data = [fileHandle readDataOfLength:nextSizeToRead];
-        if (progress) {
-            progress(data, index, YES);
-        }
-        index ++;
-        readSize += nextSizeToRead;
-        
-        if (fileSize >= (readSize + size)) {
-            nextSizeToRead = size;
-        } else {
-            nextSizeToRead = fileSize - readSize;
+        @autoreleasepool {
+            if (nextSizeToRead <= 0) {
+                break;
+            }
+            [fileHandle seekToFileOffset:readSize];
+            data = [fileHandle readDataOfLength:nextSizeToRead];
+            if (progress) {
+                progress(data, index, YES);
+            }
+            index ++;
+            readSize += nextSizeToRead;
+            
+            if (fileSize >= (readSize + size)) {
+                nextSizeToRead = size;
+            } else {
+                nextSizeToRead = fileSize - readSize;
+            }
         }
     }
     if (over) {
         over();
     }
     [fileHandle closeFile];
-    UnLock(lock);
+    [lock unLock];
 }
 
 #pragma mark - delegate

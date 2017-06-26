@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5D359EFF1EFEC64E00C1B536 /* FileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D359EFD1EFEC64E00C1B536 /* FileManager.m */; };
+		5D6AA5931F01562E00BAD1CF /* ReadWriteLock.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D6AA5921F01562E00BAD1CF /* ReadWriteLock.m */; };
 		5DA2B6901EFC099500184B6D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA2B68F1EFC099500184B6D /* main.m */; };
 		5DA2B6931EFC099500184B6D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA2B6921EFC099500184B6D /* AppDelegate.m */; };
 		5DA2B6961EFC099500184B6D /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA2B6951EFC099500184B6D /* ViewController.m */; };
@@ -40,6 +41,8 @@
 		5D359EFC1EFEC64E00C1B536 /* FileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileManager.h; path = Lib/FileManager.h; sourceTree = "<group>"; };
 		5D359EFD1EFEC64E00C1B536 /* FileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileManager.m; path = Lib/FileManager.m; sourceTree = "<group>"; };
 		5D359EFE1EFEC64E00C1B536 /* MacroForCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MacroForCache.h; path = Lib/MacroForCache.h; sourceTree = "<group>"; };
+		5D6AA5911F01562E00BAD1CF /* ReadWriteLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ReadWriteLock.h; path = Lib/ReadWriteLock.h; sourceTree = "<group>"; };
+		5D6AA5921F01562E00BAD1CF /* ReadWriteLock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ReadWriteLock.m; path = Lib/ReadWriteLock.m; sourceTree = "<group>"; };
 		5DA2B68B1EFC099500184B6D /* AsynFilePersistentManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AsynFilePersistentManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DA2B68F1EFC099500184B6D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5DA2B6911EFC099500184B6D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -156,6 +159,8 @@
 				5D359EFC1EFEC64E00C1B536 /* FileManager.h */,
 				5D359EFD1EFEC64E00C1B536 /* FileManager.m */,
 				5D359EFE1EFEC64E00C1B536 /* MacroForCache.h */,
+				5D6AA5911F01562E00BAD1CF /* ReadWriteLock.h */,
+				5D6AA5921F01562E00BAD1CF /* ReadWriteLock.m */,
 			);
 			name = Lib;
 			sourceTree = "<group>";
@@ -295,6 +300,7 @@
 			files = (
 				5DA2B6961EFC099500184B6D /* ViewController.m in Sources */,
 				5DA2B6931EFC099500184B6D /* AppDelegate.m in Sources */,
+				5D6AA5931F01562E00BAD1CF /* ReadWriteLock.m in Sources */,
 				5DA2B6901EFC099500184B6D /* main.m in Sources */,
 				5D359EFF1EFEC64E00C1B536 /* FileManager.m in Sources */,
 				5DA2B6C71EFC154B00184B6D /* DiskFileCache.m in Sources */,
